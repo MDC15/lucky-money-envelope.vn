@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=5.0"
+    />
+    <link rel="icon" href="./lixi.ico" type="image/x-icon" />
+    <title>Lì Xì Đầu Năm</title>
+    <link rel="stylesheet" href="./style.css" />
+  </head>
+  <body>
+    <script
+      type="text/javascript"
+      src="https://web.nvnstatic.net/js/events/newyear.js"
+      async
+    ></script>
+    <!-- background-music -->
+    <audio id="background-music" hidden loop>
+      <source src="./hny.mp3" type="audio/mpeg" />
+      Trình duyệt của bạn không hỗ trợ phát nhạc.
+    </audio>
+
+    <div class="header">
+      <h1>LÌ XÌ ĐẦU NĂM 🧧</h1>
+      <p>✨Chọn bao lì xì để nhận may mắn!🍀</p>
+    </div>
+
+    <div class="overlay" id="overlay"></div>
+    <div class="popup" id="popup">
+      <div class="tien-thuong" id="tien-thuong"></div>
+      <div class="loi-chuc" id="loi-chuc"></div>
+      <button id="dong-button">Start</button>
+    </div>
+
+    <!-- script js  -->
+    <script type="module" src="./main.js"></script>
+  </body>
+</html>

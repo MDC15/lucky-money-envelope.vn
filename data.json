@@ -1,0 +1,62 @@
+{
+    "loiChuc": [
+        {
+            "category": "Ngắn gọn, cô đọng",
+            "messages": [
+                "Phúc lộc song hành",
+                "Tài vận hanh thông",
+                "Xuân sang đắc lộc",
+                "Phát tài phát lộc",
+                "Như ý cát tường",
+                "Vạn sự hanh thông",
+                "Phú quý sinh tài",
+                "Gia đạo bình an"
+            ]
+        },
+        {
+            "category": "Kết hợp với hình ảnh thiên nhiên",
+            "messages": [
+                "Phúc lộc đầy nhà như hoa xuân nở rộ",
+                "May mắn đong đầy như nắng mai tràn ngõ",
+                "Hạnh phúc dạt dào như sóng biển về khơi",
+                "Thành công rực rỡ như ánh dương ban mai",
+                "Tài lộc dồi dào như mưa xuân thấm đất",
+                "An khang thịnh vượng như trăng rằm tỏa sáng"
+            ]
+        },
+        {
+            "category": "Mang tính văn học",
+            "messages": [
+                "Xuân sang lộc biếc, phước tràn nhà",
+                "Năm mới phúc lai, tài tấn tới",
+                "Đông tàn xuân đến, phát tài to",
+                "Xuân về tết đến, lộc mãn đường"
+            ]
+        },
+        {
+            "category": "Hiện đại, sáng tạo",
+            "messages": [
+                "Deadline nhẹ nhàng như mây trôi gió thổi",
+                "KPI vượt target như tên lửa phóng bay",
+                "Sự nghiệp thăng tiến như bitcoin tăng giá"
+            ]
+        },
+        {
+            "category": "Truyền thống",
+            "messages": [
+                "Trăm năm hạnh phúc, vạn sự bình an",
+                "Gia đình sum vầy, sự nghiệp hanh thông",
+                "Năm mới phát tài, vạn sự như ý",
+                "Xuân sang vượng phát, tài lộc đầy nhà"
+            ]
+        },
+        {
+            "category": "Mang tính khích lệ",
+            "messages": [
+                "Khó khăn hóa dễ dàng, thất bại thành thành công",
+                "Ước mơ thành hiện thực, nỗ lực được đền đáp",
+                "Quyết tâm thành hành động, khát vọng hóa thành công"
+            ]
+        }
+    ]
+}
