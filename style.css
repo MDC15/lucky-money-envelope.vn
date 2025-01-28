@@ -51,6 +51,33 @@ body {
     z-index: 100;
 }
 
+
+/* Thêm CSS mới */
+#name-popup h2 {
+    color: var(--primary-color);
+    margin-bottom: 1.5rem;
+  }
+  
+  #player-name {
+    width: 100%;
+    padding: 15px;
+    font-size: 1.2em;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    margin: 1rem 0;
+  }
+  
+  .error-message {
+    color: #c62828;
+    min-height: 1.5em;
+    margin: 0.5rem 0;
+    font-size: 0.9em;
+  }
+  
+  #name-popup {
+    min-width: 300px;
+  }
+
 /* Bao lì xì */
 .bao-li-xi {
     width: 80px;
@@ -93,6 +120,7 @@ body {
     overflow-y: auto;
     animation: popupFadeIn 0.4s ease-out;
 }
+
 
 .tien-thuong {
     color: var(--primary-color);

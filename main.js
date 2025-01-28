@@ -6,21 +6,20 @@
         30000, 40000, 50000,
         60000, 83860, 100000
     ];
-    let LOI_CHUC = []; // Will be populated from JSON
-
+    let LOI_CHUC = []; // Sẽ được tải từ file JSON
+    let playerName = ''; // Tên người chơi
     let soBaoDangCo = 0;
+    let gameInterval = null;
 
-    // Fetch and load the lời chúc from JSON file
+    // Hàm tải lời chúc từ file JSON
     async function loadLoiChuc() {
         try {
-            const response = await fetch('data.json');
+            const response = await fetch('data/data.json');
             const data = await response.json();
-            // Flatten all messages from different categories into a single array
             LOI_CHUC = data.loiChuc.flatMap(category => category.messages);
             console.log('Loaded', LOI_CHUC.length, 'lời chúc');
         } catch (error) {
             console.error('Error loading lời chúc:', error);
-            // Fallback to a few basic messages if loading fails
             LOI_CHUC = [
                 "Phúc lộc song hành",
                 "Tài vận hanh thông",
@@ -96,22 +95,20 @@
         document.getElementById("loi-chuc").textContent = message;
         document.getElementById("popup").style.display = "block";
         document.getElementById("overlay").style.display = "block";
+
+        const replayButton = document.getElementById("start-button");
+        replayButton.textContent = "Chơi lại";
+        replayButton.style.display = "block";
+        replayButton.disabled = false;
+
+        replayButton.addEventListener("click", function () {
+            resetGame();
+        }, { once: true });
     }
 
     function playSound() {
-        const audio = new Audio('click.mp3');
+        const audio = new Audio('./assets/audio/click.mp3');
         audio.play().catch((error) => console.log("Auto-play prevented"));
-    }
-
-    document.getElementById("dong-button").addEventListener("click", function () {
-        document.getElementById("popup").style.display = "none";
-        document.getElementById("overlay").style.display = "none";
-    });
-
-    async function start() {
-        document.addEventListener("click", playBackgroundMusic, { once: true });
-        setInterval(generateEnvelope, KHOANG_THOI_GIAN_TAO_BAO);
-        await loadLoiChuc();
     }
 
     async function playBackgroundMusic() {
@@ -120,5 +117,64 @@
         await music.play().catch((error) => console.log("Auto-play prevented"));
     }
 
-    start();
+    function resetGame() {
+        clearInterval(gameInterval);
+        document.getElementById("popup").style.display = "none";
+        document.getElementById("overlay").style.display = "none";
+        playerName = "";
+        soBaoDangCo = 0;
+        showNameInput();
+    }
+
+    function isValidName(name) {
+        const nameRegex = /^[a-zA-ZÀ-ỹ\s]{2,50}$/;
+        return nameRegex.test(name.trim());
+    }
+
+    function showNameInput() {
+        document.getElementById('name-popup').style.display = 'block';
+        document.getElementById('name-overlay').style.display = 'block';
+        document.getElementById('start-button').textContent = "Bắt đầu";
+    }
+
+    function hideNameInput() {
+        document.getElementById('name-popup').style.display = 'none';
+        document.getElementById('name-overlay').style.display = 'none';
+    }
+
+    document.getElementById('start-button').addEventListener('click', function () {
+        const nameInput = document.getElementById('player-name');
+        const errorElement = document.getElementById('name-error');
+        const name = nameInput.value.trim();
+
+        if (!name) {
+            errorElement.textContent = 'Vui lòng nhập tên của bạn!';
+            return;
+        }
+
+        if (!isValidName(name)) {
+            errorElement.textContent = 'Tên không hợp lệ (2-50 ký tự, không chứa ký tự đặc biệt)';
+            return;
+        }
+
+        const playedUsers = JSON.parse(localStorage.getItem('playedUsers') || '[]');
+        if (playedUsers.includes(name.toLowerCase())) {
+            errorElement.textContent = 'Bạn chỉ được chơi 1 lần!';
+            return;
+        }
+
+        playerName = name;
+        localStorage.setItem('playedUsers', JSON.stringify([...playedUsers, name.toLowerCase()]));
+        hideNameInput();
+        startGame();
+    });
+
+    async function startGame() {
+        await loadLoiChuc();
+        if (gameInterval) clearInterval(gameInterval); // Đảm bảo không chạy nhiều interval
+        gameInterval = setInterval(generateEnvelope, KHOANG_THOI_GIAN_TAO_BAO);
+        document.addEventListener("click", playBackgroundMusic, { once: true });
+    }
+
+    showNameInput();
 })();
