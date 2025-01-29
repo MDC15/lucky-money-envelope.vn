@@ -6,20 +6,26 @@
       name="viewport"
       content="width=device-width, initial-scale=1.0, maximum-scale=5.0"
     />
+    <script
+      type="text/javascript"
+      src="https://web.nvnstatic.net/js/events/newyear.js"
+    ></script>
     <link rel="icon" href="./assets/images/box.png" type="image/x-icon" />
     <title>Lì Xì Đầu Năm</title>
     <link rel="stylesheet" href="./style.css" />
   </head>
+
   <body>
-    <script
-      type="text/javascript"
-      src="https://web.nvnstatic.net/js/events/newyear.js"
-      async
-    ></script>
+    <!-- background-music -->
+    <audio id="background-music" hidden autoplay loop muted>
+      <source src="./assets/audio/hny.mp3" type="audio/mp3" />
+      Trình duyệt của bạn không hỗ trợ phát nhạc.
+    </audio>
+
     <!-- popup nhập tên -->
     <div class="overlay" id="name-overlay"></div>
     <div class="popup" id="name-popup">
-      <h2>VUI LÒNG NHẬP TÊN</h2>
+      <h2>MỜI BẠN NHẬP TÊN</h2>
       <input type="text" id="player-name" placeholder="Họ và tên của bạn..." />
       <div id="name-error" class="error-message"></div>
       <button id="start-button">Bắt đầu</button>
@@ -34,14 +40,10 @@
     <div class="popup" id="popup">
       <div class="tien-thuong" id="tien-thuong"></div>
       <div class="loi-chuc" id="loi-chuc"></div>
-      <button id="dong-button">Start</button>
+      <button id="dong-button">OK</button>
     </div>
-    <!-- background-music -->
-    <audio id="background-music" hidden loop>
-      <source src="./assets/audio/hny.mp3" type="audio/mpeg" />
-      Trình duyệt của bạn không hỗ trợ phát nhạc.
-    </audio>
     <!-- script js  -->
-    <script type="module" src="./main.js"></script>
+    <script type="module" src="utilities.js"></script>
+    <script type="module" src="main.js"></script>
   </body>
 </html>

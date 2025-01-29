@@ -1,44 +1,52 @@
-(async function () {
-    const SO_LUONG_BAO_TOI_DA = 100;
-    const KHOANG_THOI_GIAN_TAO_BAO = 500;
-    const TIEN_MENH_GIA = [
-        5000, 10000, 20000,
-        30000, 40000, 50000,
-        60000, 83860, 100000
-    ];
-    let LOI_CHUC = []; // Sẽ được tải từ file JSON
-    let playerName = ''; // Tên người chơi
-    let soBaoDangCo = 0;
-    let gameInterval = null;
+import { Utilities } from "./utilities.js";
 
-    // Hàm tải lời chúc từ file JSON
-    async function loadLoiChuc() {
-        try {
-            const response = await fetch('data/data.json');
-            const data = await response.json();
-            LOI_CHUC = data.loiChuc.flatMap(category => category.messages);
-            console.log('Loaded', LOI_CHUC.length, 'lời chúc');
-        } catch (error) {
-            console.error('Error loading lời chúc:', error);
-            LOI_CHUC = [
-                "Phúc lộc song hành",
-                "Tài vận hanh thông",
-                "Xuân sang đắc lộc"
-            ];
-        }
+class Game {
+    constructor() {
+        this.constants = {
+            MAX_ENVELOPES: 50,
+            SPAWN_INTERVAL: 700,
+            MONEY_VALUES: [5000, 10000, 20000, 50000, 100000, 200000, 500000],
+            MESSAGES: [
+                "An khang thịnh vượng",
+                "Phát tài phát lộc",
+                "Vạn sự như ý",
+                "Tấn tài tấn lộc",
+                "Xuân an khang, năm thịnh vượng"
+            ]
+        };
+
+        this.state = {
+            playerName: "",
+            currentEnvelopes: 0,
+            gameInterval: null,
+            playedUsers: JSON.parse(localStorage.getItem('playedUsers') || '[]')
+        };
+
+        this.init();
     }
 
-    function generateEnvelope() {
-        if (soBaoDangCo >= SO_LUONG_BAO_TOI_DA) return;
+    init() {
+        Utilities.playBackgroundMusic();
+        this.setupEventListeners();
+        this.showNameInput();
+    }
 
-        const envelope = createEnvelopeElement();
-        const animation = drop(envelope);
-        setupEvents(envelope, animation);
+    setupEventListeners() {
+        document.getElementById('start-button').addEventListener('click', () => this.handleStart());
+        document.getElementById('dong-button').addEventListener('click', () => this.handleOK());
+    }
+
+    generateEnvelope() {
+        if (this.state.currentEnvelopes >= this.constants.MAX_ENVELOPES) return;
+
+        const envelope = this.createEnvelopeElement();
+        const animation = this.drop(envelope);
+        this.setupEnvelopeEvents(envelope, animation);
         document.body.appendChild(envelope);
-        soBaoDangCo++;
+        this.state.currentEnvelopes++;
     }
 
-    function createEnvelopeElement() {
+    createEnvelopeElement() {
         const padding = 20;
         const randomX = Math.random() * (window.innerWidth - 2 * padding) + padding;
         const randomY = Math.random() * (window.innerHeight * 0.2) + padding;
@@ -51,130 +59,113 @@
         return envelope;
     }
 
-    function drop(envelope) {
+    drop(envelope) {
         const horizontalMove = Math.random() * 200 - 100;
-        const keyframes = [
+        return envelope.animate([
             { transform: 'translate(0, 0) rotate(0deg)' },
             { transform: `translate(${horizontalMove}px, ${window.innerHeight}px) rotate(${Math.random() * 360}deg)` }
-        ];
-        return envelope.animate(keyframes, {
+        ], {
             duration: Math.random() * 4000 + 3000,
             easing: "ease-in-out",
         });
     }
 
-    function setupEvents(envelope, animation) {
+    setupEnvelopeEvents(envelope, animation) {
         const handleClick = () => {
-            const money = getRandomMoney();
-            const message = getRandomMessage();
-            showPopup(money, message);
-            playSound();
+            this.state.currentEnvelopes--;
+            const money = this.getRandomMoney();
+            const message = this.getRandomMessage();
+            this.showPopup(money, message);
+            Utilities.playSound();
             animation.cancel();
             envelope.remove();
-            soBaoDangCo--;
         };
 
         envelope.addEventListener("click", handleClick);
         envelope.addEventListener("touchstart", handleClick, { passive: true });
+
         animation.onfinish = () => {
             envelope.remove();
-            soBaoDangCo--;
+            this.state.currentEnvelopes--;
         };
     }
 
-    function getRandomMoney() {
-        return TIEN_MENH_GIA[Math.floor(Math.random() * TIEN_MENH_GIA.length)];
+    getRandomMoney() {
+        return this.constants.MONEY_VALUES[Utilities.getRandomNumber(this.constants.MONEY_VALUES.length)];
     }
 
-    function getRandomMessage() {
-        return LOI_CHUC[Math.floor(Math.random() * LOI_CHUC.length)];
+    getRandomMessage() {
+        return this.constants.MESSAGES[Utilities.getRandomNumber(this.constants.MESSAGES.length)];
     }
 
-    function showPopup(money, message) {
+    showPopup(money, message) {
         document.getElementById("tien-thuong").textContent = `${money.toLocaleString()} VND`;
         document.getElementById("loi-chuc").textContent = message;
-        document.getElementById("popup").style.display = "block";
-        document.getElementById("overlay").style.display = "block";
-
-        const replayButton = document.getElementById("start-button");
-        replayButton.textContent = "Chơi lại";
-        replayButton.style.display = "block";
-        replayButton.disabled = false;
-
-        replayButton.addEventListener("click", function () {
-            resetGame();
-        }, { once: true });
+        Utilities.showElement("popup");
+        Utilities.showElement("overlay");
     }
 
-    function playSound() {
-        const audio = new Audio('./assets/audio/click.mp3');
-        audio.play().catch((error) => console.log("Auto-play prevented"));
+    resetGame() {
+        clearInterval(this.state.gameInterval);
+        Utilities.hideElement("popup");
+        Utilities.hideElement("overlay");
+        this.showNameInput();
     }
 
-    async function playBackgroundMusic() {
-        const music = document.getElementById("background-music");
-        music.volume = 1;
-        await music.play().catch((error) => console.log("Auto-play prevented"));
+    showNameInput() {
+        Utilities.showElement('name-popup');
+        Utilities.showElement('name-overlay');
     }
 
-    function resetGame() {
-        clearInterval(gameInterval);
-        document.getElementById("popup").style.display = "none";
-        document.getElementById("overlay").style.display = "none";
-        playerName = "";
-        soBaoDangCo = 0;
-        showNameInput();
+    hideNameInput() {
+        Utilities.hideElement('name-popup');
+        Utilities.hideElement('name-overlay');
     }
 
-    function isValidName(name) {
-        const nameRegex = /^[a-zA-ZÀ-ỹ\s]{2,50}$/;
-        return nameRegex.test(name.trim());
-    }
-
-    function showNameInput() {
-        document.getElementById('name-popup').style.display = 'block';
-        document.getElementById('name-overlay').style.display = 'block';
-        document.getElementById('start-button').textContent = "Bắt đầu";
-    }
-
-    function hideNameInput() {
-        document.getElementById('name-popup').style.display = 'none';
-        document.getElementById('name-overlay').style.display = 'none';
-    }
-
-    document.getElementById('start-button').addEventListener('click', function () {
+    handleStart() {
         const nameInput = document.getElementById('player-name');
         const errorElement = document.getElementById('name-error');
         const name = nameInput.value.trim();
 
+        errorElement.textContent = '';
         if (!name) {
-            errorElement.textContent = 'Vui lòng nhập tên của bạn!';
+            errorElement.textContent = 'Vui lòng nhập họ và tên của bạn!';
             return;
         }
 
-        if (!isValidName(name)) {
+        if (!Utilities.isValidName(name)) {
             errorElement.textContent = 'Tên không hợp lệ (2-50 ký tự, không chứa ký tự đặc biệt)';
             return;
         }
 
-        const playedUsers = JSON.parse(localStorage.getItem('playedUsers') || '[]');
-        if (playedUsers.includes(name.toLowerCase())) {
-            errorElement.textContent = 'Bạn chỉ được chơi 1 lần!';
+        if (this.state.playedUsers.includes(name.toLowerCase())) {
+            errorElement.textContent = 'Bạn chỉ được chơi một lần!';
             return;
         }
 
-        playerName = name;
-        localStorage.setItem('playedUsers', JSON.stringify([...playedUsers, name.toLowerCase()]));
-        hideNameInput();
-        startGame();
-    });
+        this.state.playerName = name;
+        this.state.playedUsers.push(name.toLowerCase());
+        localStorage.setItem('playedUsers', JSON.stringify(this.state.playedUsers));
 
-    async function startGame() {
-        await loadLoiChuc();
-        if (gameInterval) clearInterval(gameInterval); // Đảm bảo không chạy nhiều interval
-        gameInterval = setInterval(generateEnvelope, KHOANG_THOI_GIAN_TAO_BAO);
-        document.addEventListener("click", playBackgroundMusic, { once: true });
+        this.hideNameInput();
+        this.startGame();
     }
 
-    showNameInput();
-})();
+    startGame() {
+        if (this.state.gameInterval) clearInterval(this.state.gameInterval);
+        this.state.gameInterval = setInterval(() => this.generateEnvelope(), this.constants.SPAWN_INTERVAL);
+        document.addEventListener("click", () => Utilities.playBackgroundMusic(), { once: true });
+    }
+
+    handleOK() {
+        Utilities.hideElement("popup");
+        Utilities.hideElement("overlay");
+        Utilities.showElement("name-overlay");
+        Utilities.showElement("name-popup");
+        const nameInput = document.getElementById("player-name");
+        if (nameInput) nameInput.value = "";
+    }
+}
+
+// Khởi động trò chơi
+document.addEventListener("DOMContentLoaded", () => new Game());

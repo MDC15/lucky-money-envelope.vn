@@ -19,11 +19,11 @@
 body {
     margin: 0;
     font-family: "Arial", sans-serif;
-    background: linear-gradient(-45deg, #bfdf49, #ffd700, #ff6e6e, #ffb300);
-    background-size: 400% 400%;
+    background: linear-gradient(-45deg, #da5050, #ffd700, #f16565, #ffab00);
+    background-size: 300% 300%;
     min-height: 100vh;
     overflow-x: hidden;
-    animation: gradientBG 15s ease infinite;
+    animation: gradientBG 20s ease-in-out infinite;
 }
 
 @keyframes gradientBG {
@@ -31,8 +31,16 @@ body {
         background-position: 0% 50%;
     }
 
+    25% {
+        background-position: 50% 100%;
+    }
+
     50% {
         background-position: 100% 50%;
+    }
+
+    75% {
+        background-position: 50% 0%;
     }
 
     100% {
@@ -56,27 +64,27 @@ body {
 #name-popup h2 {
     color: var(--primary-color);
     margin-bottom: 1.5rem;
-  }
-  
-  #player-name {
+}
+
+#player-name {
     width: 100%;
     padding: 15px;
     font-size: 1.2em;
     border: 2px solid #ddd;
     border-radius: 8px;
     margin: 1rem 0;
-  }
-  
-  .error-message {
+}
+
+.error-message {
     color: #c62828;
     min-height: 1.5em;
     margin: 0.5rem 0;
     font-size: 0.9em;
-  }
-  
-  #name-popup {
+}
+
+#name-popup {
     min-width: 300px;
-  }
+}
 
 /* Bao lì xì */
 .bao-li-xi {
